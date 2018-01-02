@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ABData.iml" filepath="$PROJECT_DIR$/ABData.iml" />
+      <module fileurl="file://$PROJECT_DIR$/abdata/app.iml" filepath="$PROJECT_DIR$/abdata/app.iml" />
+    </modules>
+  </component>
+</project>
