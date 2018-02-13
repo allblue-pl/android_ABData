@@ -4,9 +4,18 @@ import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import pl.allblue.abdata.ABDField;
 import pl.allblue.abdata.JSONOperationError;
+import pl.allblue.abdata.JSONTypeError;
+import pl.allblue.abdata.ObjectCreationError;
+import pl.allblue.abdata.ObjectCreationFromJSONError;
 
 public class ABDArray<ItemClass extends Object> extends ABDField
 {
@@ -36,6 +45,38 @@ public class ABDArray<ItemClass extends Object> extends ABDField
         this(itemClass, new JSONArray());
     }
 
+    public ItemClass first()
+    {
+        if (this.length() == 0)
+            return null;
+
+        return this.get(0);
+    }
+
+    public ItemClass first_Where(Where<ItemClass> where)
+    {
+        for (int i = 0; i < this.length(); i++) {
+            ItemClass item = this.get(i);
+            if (where.matches(item))
+                return item;
+        }
+
+        return null;
+    }
+
+    public ItemClass firstArray(Class<ItemClass> itemClass)
+    {
+        if (this.length() == 0)
+            return null;
+
+        return this.getArray(itemClass, 0);
+    }
+
+    public ItemClass firstArray_Where(Class<ItemClass> itemClass)
+    {
+        throw new AssertionError("Not implemented yet.");
+    }
+
     public ItemClass get(int index)
     {
         if (index < 0 || index >= this.json.length())
@@ -53,8 +94,26 @@ public class ABDArray<ItemClass extends Object> extends ABDField
                 return (ItemClass)(Integer)this.json.getInt(index);
             if (this.itemClass == Long.class)
                 return (ItemClass)(Long)this.json.getLong(index);
-            if (ABDObject.class.isAssignableFrom(this.itemClass))
-                return (ItemClass)(new ABDObject(this.json.getJSONObject(index)));
+            if (ABDObject.class.isAssignableFrom(this.itemClass)) {
+                try {
+                    Class<?> enclosingClass = this.itemClass.getEnclosingClass();
+                    JSONObject json = this.json.getJSONObject(index);
+
+                    if (enclosingClass == null) {
+                        return (ItemClass)this.itemClass.getConstructors()[1]
+                                .newInstance(json);
+                    } else {
+                        return (ItemClass)this.itemClass.getConstructors()[1]
+                                .newInstance(this, json);
+                    }
+                } catch (IllegalAccessException e) {
+                    throw new ObjectCreationFromJSONError(e);
+                } catch (InstantiationException e) {
+                    throw new ObjectCreationFromJSONError(e);
+                } catch (InvocationTargetException e) {
+                    throw new ObjectCreationFromJSONError(e);
+                }
+            }
             if (this.itemClass == String.class)
                 return (ItemClass)this.json.getString(index);
 
@@ -64,7 +123,7 @@ public class ABDArray<ItemClass extends Object> extends ABDField
         }
     }
 
-    public ItemClass get(Class<ItemClass> itemClass, int index)
+    public ItemClass getArray(Class<ItemClass> itemClass, int index)
     {
         if (index < 0 || index >= this.json.length())
             throw new IndexOutOfBoundsException();
@@ -84,6 +143,14 @@ public class ABDArray<ItemClass extends Object> extends ABDField
         }
     }
 
+    public void insert(int index, ItemClass item)
+    {
+        for (int i = this.length() - 1; i >= index; i--)
+            this.set(i + 1, this.get(i));
+
+        this.set(index, item);
+    }
+
     public Class<ItemClass> item()
     {
         return this.itemClass;
@@ -92,6 +159,11 @@ public class ABDArray<ItemClass extends Object> extends ABDField
     public int length()
     {
         return this.json.length();
+    }
+
+    public ABDArray<ItemClass> orderBy(OrderBy<ItemClass> orderBy)
+    {
+        throw new AssertionError("Not implemented yet.");
     }
 
     public ItemClass pop()
@@ -107,6 +179,32 @@ public class ABDArray<ItemClass extends Object> extends ABDField
     public JSONArray ref()
     {
         return this.json;
+    }
+
+    public void remove(int index)
+    {
+        if (index < 0 || index >= this.json.length())
+            throw new IndexOutOfBoundsException();
+
+        try {
+            Field valuesField = JSONArray.class.getDeclaredField("values");
+            valuesField.setAccessible(true);
+            List<Object> values = (List<Object>) valuesField.get(this.json);
+            if (index >= values.size())
+                return;
+            values.remove(index);
+        } catch (Exception e) {
+            throw new AssertionError("Temporary solution.");
+        }
+
+//        try {
+//            for (int i = index; i < this.length() - 1; i++)
+//                this.json.put(i, this.get(i + 1));
+//
+//            this.json.remove(this.length() - 1);
+//        } catch (JSONException e) {
+//            throw new JSONOperationError(e);
+//        }
     }
 
     public void set(int index, ItemClass item)
@@ -132,6 +230,47 @@ public class ABDArray<ItemClass extends Object> extends ABDField
             }
         } catch (JSONException e) {
             throw new JSONOperationError(e);
+        }
+    }
+
+    public ABDArray<ItemClass> where(Where<ItemClass> where)
+    {
+        ABDArray<ItemClass> items = this.create();
+
+        for (int i = 0; i < this.length(); i++) {
+            ItemClass item = this.get(i);
+            if (where.matches(item))
+                items.push(item);
+        }
+
+        return items;
+    }
+
+
+    public interface OrderBy<ItemClass>
+    {
+        int compares(ItemClass itemA, ItemClass itemB);
+    }
+
+    public interface Where<ItemClass>
+    {
+        boolean matches(ItemClass item);
+    }
+
+
+    private ABDArray<ItemClass> create()
+    {
+        Class<?> enclosingClass = this.getClass().getEnclosingClass();
+
+        try {
+            return (ABDArray<ItemClass>)this.getClass().getConstructors()[0]
+                    .newInstance(this.itemClass);
+        } catch (IllegalAccessException e) {
+            throw new ObjectCreationError(e);
+        } catch (InstantiationException e) {
+            throw new ObjectCreationError(e);
+        } catch (InvocationTargetException e) {
+            throw new ObjectCreationError(e);
         }
     }
 

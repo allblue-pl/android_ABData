@@ -1,14 +1,20 @@
 package pl.allblue.abdata.fields;
 
+import android.util.Base64;
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import pl.allblue.abdata.ABDField;
 import pl.allblue.abdata.JSONOperationError;
 import pl.allblue.abdata.JSONTypeError;
+import pl.allblue.abdata.ObjectCreationFromJSONError;
 
 public class ABDObject extends ABDField
 {
@@ -52,6 +58,21 @@ public class ABDObject extends ABDField
 
         try {
             return this.json.getBoolean(fieldName);
+        } catch (JSONException e) {
+            throw new JSONTypeError(e);
+        }
+    }
+
+    public byte[] getData(String fieldName)
+    {
+        if (!this.json.has(fieldName))
+            return null;
+
+        if (this.json.isNull(fieldName))
+            return null;
+
+        try {
+            return Base64.decode(this.json.getString(fieldName), 0);
         } catch (JSONException e) {
             throw new JSONTypeError(e);
         }
@@ -102,7 +123,8 @@ public class ABDObject extends ABDField
         }
     }
 
-    public <ItemClass extends ABDObject> ItemClass getObject(String fieldName)
+    public <ItemClass extends ABDObject> ItemClass getObject(
+            Class<ItemClass> fieldClass, String fieldName)
     {
         if (!this.json.has(fieldName))
             return null;
@@ -111,7 +133,25 @@ public class ABDObject extends ABDField
             return null;
 
         try {
-            return (ItemClass)(new ABDObject(this.json.getJSONObject(fieldName)));
+            try {
+                Constructor<?> constructor = fieldClass.getConstructors()[1];
+                Class<?> enclosingClass = fieldClass.getEnclosingClass();
+                JSONObject json = this.json.getJSONObject(fieldName);
+
+                if (enclosingClass == null) {
+                    return (ItemClass) fieldClass.getConstructors()[1]
+                            .newInstance(json);
+                } else {
+                    return (ItemClass) fieldClass.getConstructors()[1]
+                            .newInstance(this, json);
+                }
+            } catch (IllegalAccessException e) {
+                throw new ObjectCreationFromJSONError(e);
+            } catch (InstantiationException e) {
+                throw new ObjectCreationFromJSONError(e);
+            } catch (InvocationTargetException e) {
+                throw new ObjectCreationFromJSONError(e);
+            }
         } catch (JSONException e) {
             throw new JSONTypeError(e);
         }
@@ -187,6 +227,15 @@ public class ABDObject extends ABDField
     {
         try {
             this.json.put(fieldName, fieldValue);
+        } catch (JSONException e) {
+            throw new JSONOperationError(e);
+        }
+    }
+
+    public void setData(String fieldName, byte[] data)
+    {
+        try {
+            this.json.put(fieldName, Base64.encode(data, 0));
         } catch (JSONException e) {
             throw new JSONOperationError(e);
         }
