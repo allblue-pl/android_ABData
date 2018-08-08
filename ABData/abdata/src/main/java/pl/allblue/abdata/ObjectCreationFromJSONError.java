@@ -1,5 +1,7 @@
 package pl.allblue.abdata;
 
+import android.util.Log;
+
 import org.json.JSONException;
 
 public class ObjectCreationFromJSONError extends AssertionError
@@ -15,7 +17,7 @@ public class ObjectCreationFromJSONError extends AssertionError
     @Override
     public String getMessage()
     {
-        return exception.getMessage();
+        return this.exception.getMessage();
     }
 
 }
