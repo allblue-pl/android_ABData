@@ -293,9 +293,10 @@ public class ABDatabase
                             for (int i = 0; i < columnTypes.length(); i++) {
                                 if (c.isNull(i))
                                     row.put(JSONObject.NULL);
-                                else if (columnTypes.getString(i).equals("Bool"))
+                                else if (columnTypes.getString(i).equals("Bool")) {
+                                    Log.d("Test", Integer.toString(c.getInt(i)));
                                     row.put(c.getInt(i) == 1);
-                                else if (columnTypes.getString(i).equals("Float"))
+                                } else if (columnTypes.getString(i).equals("Float"))
                                     row.put(c.getFloat(i));
                                 else if (columnTypes.getString(i).equals("Id"))
                                     row.put(c.getLong(i));
