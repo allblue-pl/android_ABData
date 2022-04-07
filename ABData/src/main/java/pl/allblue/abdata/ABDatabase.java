@@ -294,7 +294,7 @@ public class ABDatabase
                                 if (c.isNull(i))
                                     row.put(JSONObject.NULL);
                                 else if (columnTypes.getString(i).equals("Bool")) {
-                                    Log.d("Test", Integer.toString(c.getInt(i)));
+//                                    Log.d("Test", Integer.toString(c.getInt(i)));
                                     row.put(c.getInt(i) == 1);
                                 } else if (columnTypes.getString(i).equals("Float"))
                                     row.put(c.getFloat(i));
@@ -321,6 +321,7 @@ public class ABDatabase
                         result.put("rows", rows);
                         result.put("error", JSONObject.NULL);
                     } catch (SQLiteException e) {
+                        Log.e("ABDatabase", "Query_Select Error", e);
 //                        result.put("success", false);
                         result.put("rows", JSONObject.NULL);
                         result.put("error", e.getMessage());
