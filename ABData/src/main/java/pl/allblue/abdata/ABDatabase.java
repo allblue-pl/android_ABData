@@ -44,88 +44,6 @@ public class ABDatabase
         this.deviceInfo_Load(context);
 
         this.nativeActions = new ActionsSet()
-//            .addNative("AddDBRequests", new NativeAction() {
-//
-//                @Override
-//                public JSONObject call(JSONObject args) throws JSONException
-//                {
-//                    JSONObject result = new JSONObject();
-//
-//                    try {
-//                        self.addDBRequests(context, args.getJSONArray("requests"));
-//
-//                        result.put("success", true);
-//                        result.put("error", JSONObject.NULL);
-//                    } catch (SQLiteException e) {
-//                        Log.e("ABDatabase", "DB Error", e);
-//
-//                        result.put("success", false);
-//                        result.put("error", "DB Error: " + e.getMessage());
-//                    } catch (JSONException e) {
-//                        Log.e("ABDatabase", "JSON Error", e);
-//
-//                        result.put("success", false);
-//                        result.put("error", "JSON Error: " + e.getMessage());
-//                    }
-//
-//                    return result;
-//                }
-//            })
-//            .addNative("GetDeviceInfo", new NativeAction() {
-//
-//                @Override
-//                public JSONObject call(JSONObject args) throws JSONException {
-//                    JSONObject result = new JSONObject();
-//
-//                    result.put("deviceId",
-//                            self.deviceInfo_DeviceId == null ?
-//                            JSONObject.NULL : self.deviceInfo_DeviceId);
-//                    result.put("deviceHash",
-//                            self.deviceInfo_DeviceHash == null ?
-//                            JSONObject.NULL : self.deviceInfo_DeviceHash);
-//                    result.put("lastUpdate",
-//                            self.deviceInfo_LastUpdate == null ?
-//                            JSONObject.NULL : self.deviceInfo_LastUpdate);
-//
-//                    return result;
-//                }
-//
-//            })
-//            .addNative("GetDBRequests", new NativeAction() {
-//
-//                @Override
-//                public JSONObject call(JSONObject args) throws JSONException {
-//                    JSONObject result = new JSONObject();
-//
-//                    try {
-//                        JSONArray rows = self.getDBRequests(context);
-//
-//                        result.put("rows", rows);
-//                        result.put("error", JSONObject.NULL);
-//                    } catch (SQLiteException e) {
-//                        Log.e("ABDatabase", "DB Error", e);
-//
-//                        result.put("rows", JSONObject.NULL);
-//                        result.put("error", "DB Error: " + e.getMessage());
-//                    }
-//
-//                    return result;
-//                }
-//
-//            })
-//            .addNative("GetNextId", new NativeAction() {
-//
-//                @Override
-//                public JSONObject call(JSONObject args) throws JSONException {
-//                    JSONObject result = new JSONObject();
-//
-//                    result.put("nextId", self.getNextTableId(context,
-//                            args.getString("tableName")));
-//
-//                    return result;
-//                }
-//
-//            })
             .addNative("GetTableColumns", new NativeAction() {
 
                 @Override
@@ -179,18 +97,6 @@ public class ABDatabase
                 }
 
             })
-//            .addNative("SetDeviceInfo", new NativeAction() {
-//
-//                @Override
-//                public JSONObject call(JSONObject args) throws JSONException {
-//                    JSONObject result = new JSONObject();
-//
-//                    self.deviceInfo_Save(context, args);
-//
-//                    return result;
-//                }
-//
-//            })
             .addNative("Transaction_Finish", new NativeAction() {
 
                 @Override
@@ -242,6 +148,8 @@ public class ABDatabase
                 public JSONObject call(JSONObject args) throws JSONException {
                     JSONObject result = new JSONObject();
 
+                    Log.d("ABDatabase", "Starting transaction");
+
                     try {
                         db.beginTransaction();
 
@@ -264,6 +172,8 @@ public class ABDatabase
 
                     try {
                         db.execSQL(args.getString("query"));
+
+                        Log.d("ABDatabase", args.getString("query"));
 
                         result.put("success", true);
                         result.put("error", JSONObject.NULL);
