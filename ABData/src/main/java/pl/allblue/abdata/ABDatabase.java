@@ -25,8 +25,9 @@ public class ABDatabase
     static public final String FilePaths_DeviceInfo = "device-info.json";
     static public final String FilePaths_TableIds = "table-ids.json";
 
+    static private DatabaseHelper DatabaseHelperInstance = null;
 
-    public DatabaseHelper dbHelper = null;
+
     public SQLiteDatabase db = null;
     public ActionsSet nativeActions = null;
 
@@ -36,8 +37,9 @@ public class ABDatabase
 
     public ABDatabase(final Context context, NativeApp nativeApp)
     {
-        this.dbHelper = new DatabaseHelper(context);
-        this.db = this.dbHelper.getWritableDatabase();
+        if (ABDatabase.DatabaseHelperInstance == null)
+            ABDatabase.DatabaseHelperInstance = new DatabaseHelper(context);
+        this.db = ABDatabase.DatabaseHelperInstance.getWritableDatabase();
         final SQLiteDatabase db = this.db;
         final ABDatabase self = this;
 
@@ -262,7 +264,8 @@ public class ABDatabase
 
     public void showTables()
     {
-        Cursor c = this.dbHelper.getReadableDatabase().rawQuery("SHOW TABLES;", null);
+        Cursor c = ABDatabase.DatabaseHelperInstance.getReadableDatabase()
+                .rawQuery("SHOW TABLES;", null);
         while (c.moveToNext()) {
             List<String> cols = new ArrayList<>();
             String colsStr = "";
