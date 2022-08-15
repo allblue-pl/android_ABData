@@ -23,7 +23,7 @@ dependencies {
 
     /* Room */
     implementation "android.arch.persistence.room:runtime:1.1.1"
-    implementation project(path: ':abnative')
+//    implementation project(path: ':abnative')
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
 
     /* Test */
