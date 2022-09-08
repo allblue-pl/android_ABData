@@ -45,12 +45,41 @@ public class Table {
         });
     }
 
+    public void update(JSONArray rows, OnUpdateCallback callback) throws ABDataException
+    {
+        JSONObject actionArgs = new JSONObject();
+        try {
+            actionArgs.put("tableName", this.name);
+            actionArgs.put("rows", rows);
+        } catch (JSONException e) {
+            throw new ABDataException(e.getMessage(), e);
+        }
+
+        Log.d("Table", "Calling update...");
+        this.dataStore.getNativeApp().callWeb("ABData",
+                "Table_Update", actionArgs, new OnWebResultCallback() {
+            @Override
+            public void call(JSONObject result) throws JSONException {
+                if (!result.isNull("error")) {
+                    Log.d("ABData Error -> Update", result.getString("error"));
+                    callback.onUpdate(false, result.getString("error"));
+                    return;
+                }
+
+                callback.onUpdate(result.getBoolean("success"), null);
+            }
+        });
+    }
+
 
     public interface OnSelectCallback
     {
-
         void onSelect(JSONArray rows, String error) throws JSONException;
+    }
 
+    public interface OnUpdateCallback
+    {
+        void onUpdate(boolean success, String error) throws JSONException;
     }
 
 }
