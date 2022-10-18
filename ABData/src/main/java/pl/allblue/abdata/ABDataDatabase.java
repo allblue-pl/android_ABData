@@ -95,8 +95,6 @@ public class ABDataDatabase
             .addNative("Transaction_Start", (args) -> {
                 JSONObject result = new JSONObject();
 
-                Log.d("ABDatabase", "Starting transaction");
-
                 try {
                     self.db.transaction_Start();
 
@@ -114,8 +112,6 @@ public class ABDataDatabase
 
                 try {
                     self.db.query_Execute(args.getString("query"));
-
-                    Log.d("ABDatabase", args.getString("query"));
 
                     result.put("success", true);
                     result.put("error", JSONObject.NULL);

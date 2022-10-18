@@ -19,6 +19,35 @@ public class Table {
         this.dataStore = dataStore;
     }
 
+    public void delete(JSONArray where, OnExecuteCallback callback)
+            throws ABDataException
+    {
+        JSONObject actionArgs = new JSONObject();
+        try {
+            actionArgs.put("tableName", this.name);
+            actionArgs.put("where", where);
+        } catch (JSONException e) {
+            throw new ABDataException(e.getMessage(), e);
+        }
+
+        Log.d("Table", "Calling delete...");
+        this.dataStore.getNativeApp().callWeb("ABData",
+                "Table_Delete", actionArgs, new OnWebResultCallback() {
+                    @Override
+                    public void call(JSONObject result) throws JSONException {
+                        if (!result.isNull("error")) {
+                            Log.d("ABData Error -> Delete", result.getString(
+                                    "error"));
+                            callback.onExecute(result.getString(
+                                    "error"));
+                            return;
+                        }
+
+                        callback.onExecute(null);
+                    }
+                });
+    }
+
     public void select(JSONObject args, OnSelectCallback callback) throws ABDataException
     {
         JSONObject actionArgs = new JSONObject();
@@ -45,7 +74,7 @@ public class Table {
         });
     }
 
-    public void update(JSONArray rows, OnUpdateCallback callback) throws ABDataException
+    public void update(JSONArray rows, OnExecuteCallback callback) throws ABDataException
     {
         JSONObject actionArgs = new JSONObject();
         try {
@@ -62,11 +91,11 @@ public class Table {
             public void call(JSONObject result) throws JSONException {
                 if (!result.isNull("error")) {
                     Log.d("ABData Error -> Update", result.getString("error"));
-                    callback.onUpdate(false, result.getString("error"));
+                    callback.onExecute(result.getString("error"));
                     return;
                 }
 
-                callback.onUpdate(result.getBoolean("success"), null);
+                callback.onExecute(null);
             }
         });
     }
@@ -77,9 +106,9 @@ public class Table {
         void onSelect(JSONArray rows, String error) throws JSONException;
     }
 
-    public interface OnUpdateCallback
+    public interface OnExecuteCallback
     {
-        void onUpdate(boolean success, String error) throws JSONException;
+        void onExecute(String error) throws JSONException;
     }
 
 }
