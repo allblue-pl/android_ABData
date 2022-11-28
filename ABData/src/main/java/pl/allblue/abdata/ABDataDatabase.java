@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.allblue.abdatabase.ABDatabase;
+import pl.allblue.abdatabase.ABDatabaseException;
 import pl.allblue.abdatabase.ColumnInfo;
 import pl.allblue.abnative.ActionsSet;
 import pl.allblue.abnative.NativeAction;
@@ -68,10 +69,14 @@ public class ABDataDatabase
                 JSONObject result = new JSONObject();
 
                 try {
-                    self.db.transaction_Finish(args.getBoolean("commit"));
+                    self.db.transaction_Finish(args.getInt("transactionId"),
+                            args.getBoolean("commit"));
 
                     result.put("success", true);
                     result.put("error", JSONObject.NULL);
+                } catch (ABDatabaseException e) {
+                    result.put("success", false);
+                    result.put("error", e.toString());
                 } catch (SQLException e) {
                     result.put("success", false);
                     result.put("error", e.toString());
@@ -96,12 +101,18 @@ public class ABDataDatabase
                 JSONObject result = new JSONObject();
 
                 try {
-                    self.db.transaction_Start();
+                    int transactionId = self.db.transaction_Start();
 
                     result.put("success", true);
+                    result.put("transactionId", transactionId);
                     result.put("error", JSONObject.NULL);
+                } catch (ABDatabaseException e) {
+                    result.put("success", false);
+                    result.put("transactionId", null);
+                    result.put("error", e.toString());
                 } catch (SQLException e) {
                     result.put("success", false);
+                    result.put("transactionId", null);
                     result.put("error", e.toString());
                 }
 
@@ -111,10 +122,15 @@ public class ABDataDatabase
                 JSONObject result = new JSONObject();
 
                 try {
-                    self.db.query_Execute(args.getString("query"));
+                    self.db.query_Execute(args.getString("query"),
+                            args.isNull("transactionId") ?
+                            null : args.getInt("transactionId"));
 
                     result.put("success", true);
                     result.put("error", JSONObject.NULL);
+                } catch (ABDatabaseException e) {
+                    result.put("success", false);
+                    result.put("error", e.toString());
                 } catch (SQLException e) {
                     result.put("success", false);
                     result.put("error", e.toString());
@@ -133,7 +149,9 @@ public class ABDataDatabase
 
                 try {
                     List<JSONArray> rows = self.db.query_Select(args.getString(
-                            "query"), columnTypes);
+                            "query"), columnTypes,
+                            args.isNull("transactionId") ?
+                            null : args.getInt("transactionId"));
                     JSONArray rows_JSON = new JSONArray();
                     for (int i = 0; i < rows.size(); i++)
                         rows_JSON.put(rows.get(i));
@@ -141,6 +159,11 @@ public class ABDataDatabase
 //                        result.put("success", true);
                     result.put("rows", rows_JSON);
                     result.put("error", JSONObject.NULL);
+                } catch (ABDatabaseException e) {
+                    Log.e("ABDatabase", "Query_Select Error", e);
+//                        result.put("success", false);
+                    result.put("rows", JSONObject.NULL);
+                    result.put("error", e.getMessage());
                 } catch (SQLiteException e) {
                     Log.e("ABDatabase", "Query_Select Error", e);
 //                        result.put("success", false);
