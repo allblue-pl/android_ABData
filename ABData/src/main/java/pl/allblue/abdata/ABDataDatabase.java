@@ -5,17 +5,14 @@ import android.database.SQLException;
 import android.util.Log;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import pl.allblue.abdatabase.ABDatabase;
 import pl.allblue.abdatabase.ABDatabaseException;
 import pl.allblue.abdatabase.ColumnInfo;
 import pl.allblue.abnative.ActionsSet;
-import pl.allblue.abnative.NativeAction;
 import pl.allblue.abnative.NativeApp;
 
 public class ABDataDatabase
