@@ -19,11 +19,13 @@ public class Table {
         this.dataStore = dataStore;
     }
 
-    public void delete(JSONArray where, OnExecuteCallback callback)
-            throws ABDataException
+    public void delete(JSONArray where, Integer transactionId,
+            OnExecuteCallback callback) throws ABDataException
     {
         JSONObject actionArgs = new JSONObject();
         try {
+            actionArgs.put("transactionId", transactionId == null ?
+                    JSONObject.NULL : transactionId);
             actionArgs.put("tableName", this.name);
             actionArgs.put("where", where);
         } catch (JSONException e) {
@@ -48,10 +50,13 @@ public class Table {
                 });
     }
 
-    public void select(JSONObject args, OnSelectCallback callback) throws ABDataException
+    public void select(JSONObject args, Integer transactionId,
+            OnSelectCallback callback) throws ABDataException
     {
         JSONObject actionArgs = new JSONObject();
         try {
+            actionArgs.put("transactionId", transactionId == null ?
+                    JSONObject.NULL : transactionId);
             actionArgs.put("tableName", this.name);
             actionArgs.put("args", args);
         } catch (JSONException e) {
@@ -74,10 +79,15 @@ public class Table {
         });
     }
 
-    public void update(JSONArray rows, OnExecuteCallback callback) throws ABDataException
+    public void update(JSONArray rows, Integer transactionId,
+            OnExecuteCallback callback) throws ABDataException
     {
+        Log.d("Testing", this.name + ": " + transactionId);
+
         JSONObject actionArgs = new JSONObject();
         try {
+            actionArgs.put("transactionId", transactionId == null ?
+                    JSONObject.NULL : transactionId);
             actionArgs.put("tableName", this.name);
             actionArgs.put("rows", rows);
         } catch (JSONException e) {

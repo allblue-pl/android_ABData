@@ -1,6 +1,5 @@
 package pl.allblue.abdata;
 
-import android.database.SQLException;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -10,11 +9,8 @@ import org.json.JSONObject;
 import java.util.List;
 
 import pl.allblue.abdatabase.ABDatabase;
-import pl.allblue.abdatabase.ABDatabaseException;
 import pl.allblue.abdatabase.ColumnInfo;
-import pl.allblue.abnative.ActionResultCallback;
 import pl.allblue.abnative.ActionsSet;
-import pl.allblue.abnative.NativeActionCallback;
 import pl.allblue.abnative.NativeApp;
 
 public class ABDataDatabase
@@ -117,7 +113,7 @@ public class ABDataDatabase
                     (args, resultCallback) -> {
                 this.db.transaction_Finish(args.getInt("transactionId"),
                         args.getBoolean("commit"),
-                        new ABDatabase.VoidResultCallback_ThrowsException() {
+                        new ABDatabase.Transaction_FinishResultCallback() {
                     @Override
                     public void onError(Exception e) {
                         Log.w("ABDataDatabase", e.getMessage(), e);
@@ -180,11 +176,13 @@ public class ABDataDatabase
                     }
 
                     @Override
-                    public void onResult(boolean isAutocommit) {
+                    public void onResult(Integer transactionId) {
                         JSONObject result = new JSONObject();
 
                         try {
-                            result.put("result", isAutocommit);
+                            result.put("transactionId",
+                                    transactionId == null ?
+                                    JSONObject.NULL : transactionId);
                             result.put("error", JSONObject.NULL);
                         } catch (Exception e) {
                             resultCallback.onError(e);
@@ -212,13 +210,14 @@ public class ABDataDatabase
             .addNativeCallback("Transaction_Start",
                     (args, resultCallback) -> {
                 this.db.transaction_Start(
-                        new ABDatabase.StartTransactionResultCallback() {
+                        new ABDatabase.Transaction_StartResultCallback() {
                     @Override
                     public void onError(Exception e) {
                         Log.w("ABDataDatabase", e.getMessage(), e);
                         JSONObject result = new JSONObject();
 
                         try {
+                            result.put("transactionId", JSONObject.NULL);
                             result.put("error", e.getMessage());
                         } catch (JSONException e_JSON) {
                             Log.e("ABDataDatabase", e_JSON.getMessage(),
