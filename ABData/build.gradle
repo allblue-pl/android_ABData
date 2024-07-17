@@ -36,6 +36,6 @@ dependencies {
 //    implementation 'org.jetbrains:annotations-java5:15.0'
 
     implementation project(path: ':abdatabase')
-    implementation project(path: ':abnative')
+//    implementation project(path: ':abnative')
 
 }
