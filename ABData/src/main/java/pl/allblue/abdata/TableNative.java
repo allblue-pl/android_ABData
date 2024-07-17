@@ -8,12 +8,12 @@ import org.json.JSONObject;
 
 import pl.allblue.abnative.OnWebResultCallback;
 
-public class Table {
+public class TableNative {
 
     private DataStore dataStore = null;
     private String name = null;
 
-    public Table(DataStore dataStore, String tableName)
+    public TableNative(DataStore dataStore, String tableName)
     {
         this.name = tableName;
         this.dataStore = dataStore;

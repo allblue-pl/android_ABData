@@ -18,9 +18,9 @@ public class DataStore {
         return this.nativeApp;
     }
 
-    public Table getTable(String name)
+    public TableNative getTable(String name)
     {
-        return new Table(this, name);
+        return new TableNative(this, name);
     }
 
 
