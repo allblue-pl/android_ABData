@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_checked">To pole musi zostać zaznaczone.</string>
+    <string name="not_null">To pole nie może mieć wartości "null".</string>
+    <string name="not_set">To pole musi zostać wypełnione.</string>
+
+    <string name="wrong_type">Nieprawidłowy typ wartości.</string>
+</resources>
