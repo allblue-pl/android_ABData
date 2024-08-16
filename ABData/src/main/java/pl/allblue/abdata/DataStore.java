@@ -8,6 +8,8 @@ import org.json.JSONException;
 import java.util.List;
 
 import pl.allblue.abdatabase.ABDatabase;
+import pl.allblue.abdatabase.Result;
+import pl.allblue.abdatabase.SelectColumnType;
 
 public class DataStore {
 
@@ -15,8 +17,9 @@ public class DataStore {
             OnGetDBSchemeVersion callback) {
         Integer version = null;
         db.query_Select("SELECT Name, Data FROM _ABData_Settings" +
-                " WHERE Name = 'version'", new String[] {"String", "JSON" },
-                transactionId, new ABDatabase.SelectResultCallback() {
+                " WHERE Name = 'version'", new SelectColumnType[] {
+                SelectColumnType.String, SelectColumnType.JSON },
+                transactionId, new Result.OnSelect() {
             @Override
             public void onError(Exception e) {
                 Log.d("DataStore", "Cannot get DB scheme version.", e);

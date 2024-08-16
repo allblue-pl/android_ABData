@@ -12,6 +12,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 
 public class ABDForm {
@@ -31,26 +33,32 @@ public class ABDForm {
 
         this.fields.put(fieldName, new Pair<>(FieldType.Text, editText));
 
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String error = self.validator.getFieldError(fieldName,
-                        s.toString());
-                layout.setError(error);
-                layout.setErrorEnabled(error != null);
-            }
-        });
+//        editText.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                String error = self.validator.getFieldError(fieldName,
+//                        s.toString());
+//                layout.setError(error);
+//                layout.setErrorEnabled(error != null);
+//            }
+//        });
     }
+
+    public void setValidatorInfo(JSONObject validatorInfo)
+    {
+
+    }
+
 
     enum FieldType {
         DateTime,
