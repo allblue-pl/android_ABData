@@ -54,8 +54,7 @@ public class ABDForm {
 //        });
     }
 
-    public void setValidatorInfo(JSONObject validatorInfo)
-    {
+    public void setValidatorInfo(JSONObject validatorInfo) {
 
     }
 
