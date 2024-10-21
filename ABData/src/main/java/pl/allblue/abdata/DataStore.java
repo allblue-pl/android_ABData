@@ -15,7 +15,6 @@ public class DataStore {
 
     static public void GetDBSchemeVersion(ABDatabase db, Integer transactionId,
             OnGetDBSchemeVersion callback) {
-        Integer version = null;
         db.query_Select("SELECT Name, Data FROM _ABData_Settings" +
                 " WHERE Name = 'version'", new SelectColumnType[] {
                 SelectColumnType.String, SelectColumnType.JSON },

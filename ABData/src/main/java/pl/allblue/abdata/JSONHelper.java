@@ -19,8 +19,7 @@ public class JSONHelper
 {
 
     static public List<JSONObject> GetListFromData(JSONObject jsonData,
-            String propertyName)
-    {
+            String propertyName) {
         try {
             if (!jsonData.has(propertyName))
                 return new ArrayList<>();
@@ -38,8 +37,7 @@ public class JSONHelper
     }
 
     static public JSONObject GetObjectFromData(JSONObject jsonData,
-            String propertyName)
-    {
+            String propertyName) {
         try {
             if (!jsonData.has(propertyName))
                 return new JSONObject();
@@ -52,8 +50,7 @@ public class JSONHelper
     }
 
     static public boolean SaveFile(Context context, String filePath,
-            JSONObject json)
-    {
+            JSONObject json) {
         File file = new File(context.getFilesDir(), filePath);
         try {
             FileOutputStream fos = new FileOutputStream(file);
@@ -68,8 +65,7 @@ public class JSONHelper
         return true;
     }
 
-    static public JSONObject LoadFile(Context context, String filePath)
-    {
+    static public JSONObject LoadFile(Context context, String filePath) {
         File file = new File(context.getFilesDir(), filePath);
         if (file.exists()) {
             try {
