@@ -20,8 +20,8 @@ public class ABTable {
     }
 
     public int getColumnIndex(String columnName) {
-        for (int i = 0; i < this.columns.length; i++) {
-            if (this.columns[i].name == columnName)
+        for (int i = 0; i < columns.length; i++) {
+            if (columns[i].name == columnName)
                 return i;
         }
 
@@ -29,16 +29,20 @@ public class ABTable {
                 "' does not exist.");
     }
 
+    public int getColumnsCount() {
+        return columns.length;
+    }
+
     public String getSelect_ColumnNames(String tableAlias, String prefix) {
         String select = "";
-        for (int i = 0; i < this.columns.length; i++) {
+        for (int i = 0; i < columns.length; i++) {
             if (i > 0)
                 select += ",";
             if (tableAlias != null)
                 select += tableAlias + ".";
-            select += this.columns[i].name;
+            select += columns[i].name;
             if (prefix != null) {
-                select += " AS " + prefix + this.columns[i].name;
+                select += " AS " + prefix + columns[i].name;
             }
         }
 
@@ -46,17 +50,17 @@ public class ABTable {
     }
 
     public String getSelect_ColumnNames(String tableAlias) {
-        return this.getSelect_ColumnNames(tableAlias, null);
+        return getSelect_ColumnNames(tableAlias, null);
     }
 
     public String getSelect_ColumnNames() {
-        return this.getSelect_ColumnNames(null);
+        return getSelect_ColumnNames(null);
     }
 
     public List<SelectColumnType> getSelect_ColumnTypes() {
         List<SelectColumnType> columnTypes = new ArrayList<>();
-        for (int i = 0; i < this.columns.length; i++)
-            columnTypes.add(this.columns[i].type);
+        for (int i = 0; i < columns.length; i++)
+            columnTypes.add(columns[i].type);
 
         return columnTypes;
     }
@@ -66,8 +70,8 @@ public class ABTable {
 //        private String type;
 //
 //        public Column(String name, String type) {
-//            this.name = name;
-//            this.type = type;
+//            name = name;
+//            type = type;
 //        }
 //    }
 
@@ -77,12 +81,12 @@ public class ABTable {
 
         private int columnsCount;
 
-        protected JSONArray json;
+        protected JSONArray jRow;
         protected int offset;
 
-        public Row(JSONArray json, int columnsCount, int offset) {
-//            this.table = table;
-            this.json = json;
+        public Row(JSONArray jRow, int columnsCount, int offset) {
+//            table = table;
+            this.jRow = jRow;
             this.columnsCount = columnsCount;
             this.offset = offset;
         }
@@ -92,10 +96,18 @@ public class ABTable {
         }
 
         public int getColumnsCount() {
-            return this.columnsCount;
+            return columnsCount;
         }
 
-        abstract public JSONObject getRowAsJSONObject();
+        abstract public JSONObject getAsJSONObject();
+        abstract public JSONObject getAsJSONObject(String prefix);
+        abstract public void setFromJSONObject(JSONObject json,
+                String prefix, int offset);
+        abstract public void setFromJSONObject(JSONObject json,
+                String prefix);
+        abstract public void setFromJSONObject(JSONObject json,
+                int offset);
+        abstract public void setFromJSONObject(JSONObject json);
     }
 
 }
