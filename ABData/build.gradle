@@ -31,7 +31,7 @@ dependencies {
     annotationProcessor libs.room.compiler
 
     /* Test */
-    testImplementation libs.junit.junit
+    testImplementation libs.junit
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 //    implementation 'org.jetbrains:annotations-java5:15.0'
