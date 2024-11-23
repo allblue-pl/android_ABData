@@ -78,9 +78,9 @@ public class ABDStringValidator extends ABDFieldValidator {
             public String regexp;
             public String errorMessage;
 
-            public RegExpProperty(String regexp, String errorMesssage) {
+            public RegExpProperty(String regexp, String errorMessage) {
                 this.regexp = regexp;
-                this.errorMessage = errorMesssage;
+                this.errorMessage = errorMessage;
             }
         }
 

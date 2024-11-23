@@ -33,7 +33,8 @@ public class DataStore {
                 }
 
                 try {
-                    callback.onGetDBSchemeVersion(rows.get(0).getInt(1));
+                    callback.onGetDBSchemeVersion(rows.get(0).getJSONObject(1)
+                            .getInt("value"));
                 } catch (JSONException e) {
                     Log.d("DataStore", "Cannot get DB scheme version.", e);
                     callback.onGetDBSchemeVersion(null);
