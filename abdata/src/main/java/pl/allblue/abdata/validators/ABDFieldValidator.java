@@ -7,7 +7,7 @@ import pl.allblue.abdata.R;
 
 abstract public class ABDFieldValidator {
 
-    static class Properties<PropertiesClass extends Properties> {
+    protected static class Properties<PropertiesClass extends Properties> {
 
         boolean notNull;
         boolean required;
@@ -17,11 +17,13 @@ abstract public class ABDFieldValidator {
             this.required = true;
         }
 
+        @SuppressWarnings("unchecked")
         public PropertiesClass setNotNull(boolean notNull) {
             this.notNull = notNull;
             return (PropertiesClass)this;
         }
 
+        @SuppressWarnings("unchecked")
         public PropertiesClass setRequired(boolean required) {
             this.required = required;
             return (PropertiesClass)this;
